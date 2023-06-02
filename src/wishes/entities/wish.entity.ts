@@ -1,28 +1,10 @@
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { LocalBaseEntity } from 'src/utils/base.entity';
+import { Column, Entity, OneToMany, ManyToOne } from 'typeorm';
 
 @Entity()
-export class Wish {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @CreateDateColumn()
-  @Column({ type: 'timestamptz' })
-  createdAt: string;
-
-  @UpdateDateColumn()
-  @Column({ type: 'timestamptz' })
-  updatedAt: string;
-
+export class Wish extends LocalBaseEntity {
   @Column()
   name: string;
 

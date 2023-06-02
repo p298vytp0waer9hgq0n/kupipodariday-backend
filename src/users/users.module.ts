@@ -9,5 +9,6 @@ import { Wish } from 'src/wishes/entities/wish.entity';
   imports: [TypeOrmModule.forFeature([User, Wish])],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}

@@ -1,29 +1,12 @@
 import { Offer } from 'src/offers/entities/offer.entity';
+import { LocalBaseEntity } from 'src/utils/base.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @CreateDateColumn()
-  @Column({ type: 'timestamptz' })
-  createdAt: string;
-
-  @UpdateDateColumn()
-  @Column({ type: 'timestamptz' })
-  updatedAt: string;
-
-  @Column()
+export class User extends LocalBaseEntity {
+  @Column({ unique: true })
   username: string;
 
   @Column()
@@ -32,7 +15,7 @@ export class User {
   @Column({ default: 'https://i.pravatar.cc/300' })
   avatar: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
