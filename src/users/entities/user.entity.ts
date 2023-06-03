@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { LocalBaseEntity } from 'src/utils/base.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
@@ -18,6 +19,7 @@ export class User extends LocalBaseEntity {
   @Column({ unique: true })
   email: string;
 
+  @Exclude()
   @Column()
   password: string;
 

@@ -34,10 +34,7 @@ export class AuthService {
     if (user) {
       console.log(user);
       const match = bcrypt.compareSync(password, user.password);
-      if (match) {
-        delete user.password;
-        return user;
-      }
+      if (match) return user;
     }
     return null;
   }
