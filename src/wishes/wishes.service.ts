@@ -46,11 +46,13 @@ export class WishesService {
     });
   }
 
-  findOne(id: number) {
-    return this.wishesRepository.findOne({
+  async findOne(id: number) {
+    const result = await this.wishesRepository.findOne({
       relations: { user: true },
       where: { id },
     });
+    if (!result) throw new NotFoundException('Виш не найден.');
+    return result;
   }
 
   async update(userId: number, id: number, updateWishDto: UpdateWishDto) {
@@ -64,9 +66,18 @@ export class WishesService {
 
   async remove(userId: number, id: number) {
     const wish = await this.findOne(id);
-    if (!wish) throw new NotFoundException('Виш не найден.');
     if (wish.user.id !== userId)
       throw new UnauthorizedException('Нельзя удалять чужие виши.');
     return this.wishesRepository.delete(id);
+  }
+
+  async copy(userId, id: number) {
+    const wish = await this.findOne(id);
+    const newWish = { ...wish, user: userId };
+    newWish.copied = 0;
+    delete newWish.id;
+    wish.copied++;
+    this.wishesRepository.save(wish);
+    return this.wishesRepository.save(newWish);
   }
 }
