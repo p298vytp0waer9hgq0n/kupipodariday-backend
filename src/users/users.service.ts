@@ -6,12 +6,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { FindUserDto } from './dto/find-user.dto';
+import { Wish } from '../wishes/entities/wish.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Wish)
+    private wishesRepository: Repository<Wish>,
   ) {}
 
   create(createUserDto: CreateUserDto) {
@@ -23,7 +26,7 @@ export class UsersService {
   }
 
   findOneById(id: number) {
-    return this.usersRepository.findOneBy({ id: id });
+    return this.usersRepository.findOneBy({ id });
   }
 
   async findMany({ query }: FindUserDto) {
@@ -43,5 +46,14 @@ export class UsersService {
 
   remove(id: number) {
     return this.usersRepository.delete(id);
+  }
+
+  findUserWishes(userId: number) {
+    const user = new User();
+    user.id = userId;
+    return this.wishesRepository.find({
+      relations: { user: true },
+      where: { user: user },
+    });
   }
 }

@@ -32,7 +32,6 @@ export class AuthService {
   async validatePasswd({ password, username }: SigninUserDto) {
     const user = await this.usersService.findOneByName(username);
     if (user) {
-      console.log(user);
       const match = bcrypt.compareSync(password, user.password);
       if (match) return user;
     }

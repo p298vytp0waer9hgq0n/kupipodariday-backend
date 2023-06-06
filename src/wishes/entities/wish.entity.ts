@@ -14,10 +14,10 @@ export class Wish extends LocalBaseEntity {
   @Column()
   image: string;
 
-  @Column({ type: 'decimal', precision: 2 })
+  @Column({ type: 'decimal', scale: 2 })
   price: number;
 
-  @Column({ type: 'decimal', precision: 2 })
+  @Column({ type: 'decimal', scale: 2 })
   raised: number;
 
   @ManyToOne(() => User, (user) => user.id)
@@ -26,7 +26,7 @@ export class Wish extends LocalBaseEntity {
   @Column()
   description: string;
 
-  @OneToMany(() => Offer, (offer) => offer.id)
+  @OneToMany(() => Offer, (offer) => offer.wish)
   offers: Offer[];
 
   @Column()

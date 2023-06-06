@@ -23,12 +23,12 @@ export class User extends LocalBaseEntity {
   @Column()
   password: string;
 
-  @OneToMany(() => Wish, (wish) => wish.id)
+  @OneToMany(() => Wish, (wish) => wish.user)
   wish: Wish[];
 
-  @OneToMany(() => Offer, (offer) => offer.id)
+  @OneToMany(() => Offer, (offer) => offer.user)
   offer: Offer[];
 
-  @OneToMany(() => Wishlist, (wishlist) => wishlist.id)
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
   wishlist: Wishlist[];
 }

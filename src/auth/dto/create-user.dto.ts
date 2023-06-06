@@ -11,7 +11,6 @@ export class CreateUserDto {
   @IsUrl()
   avatar: string;
 
-  @IsNotEmpty()
   @IsEmail()
   email: string;
 

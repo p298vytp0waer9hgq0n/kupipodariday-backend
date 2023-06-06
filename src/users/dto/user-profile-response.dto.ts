@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsUrl, Length } from 'class-validator';
 
 export class UserProfileResponseDto {
@@ -25,4 +26,7 @@ export class UserProfileResponseDto {
 
   @IsNotEmpty()
   updatedAt: string;
+
+  @Exclude()
+  password;
 }

@@ -10,6 +10,10 @@ export class CreateWishDto {
   image: string;
 
   @IsNotEmpty()
+  @IsUrl()
+  link: string;
+
+  @IsNotEmpty()
   @Min(1)
   price: number;
 
