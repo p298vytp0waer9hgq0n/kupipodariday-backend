@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,12 +22,17 @@ export class WishesService {
 
   async create(id: number, createWishDto: CreateWishDto) {
     const user = await this.usersRepository.findOneBy({ id });
-    return this.wishesRepository.save({ ...createWishDto, user, copied: 0, raised: 0 });
+    return this.wishesRepository.save({
+      ...createWishDto,
+      user,
+      copied: 0,
+      raised: 0,
+    });
   }
 
   findLatest() {
     return this.wishesRepository.find({
-      relations: { user: true },
+      relations: { user: true, offers: true },
       order: { createdAt: 'DESC' },
       take: 40,
     });

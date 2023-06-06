@@ -1,7 +1,8 @@
-import { IsNotEmpty, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, Min } from 'class-validator';
 
 export class CreateOfferDto {
   @IsNotEmpty()
+  @IsNumber()
   @Min(1)
   amount: number;
 
