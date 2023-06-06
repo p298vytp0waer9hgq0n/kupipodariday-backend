@@ -19,13 +19,19 @@ export class WishlistsService {
   ) {}
 
   async create(userId, createWishlistDto: CreateWishlistDto) {
+    const items = createWishlistDto.itemsId.map((ele) => {
+      const wish = new Wish();
+      wish.id = ele;
+      return wish;
+    });
     return this.wishlistRepository.save({
       ...createWishlistDto,
       owner: userId,
+      items: items,
     });
   }
 
-  findAll(id) {
+  findAll(id: number) {
     return this.wishlistRepository.find({
       relations: { owner: true },
       where: {
@@ -37,7 +43,10 @@ export class WishlistsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} wishlist`;
+    return this.wishlistRepository.findOne({
+      relations: { items: true, owner: true },
+      where: { id },
+    });
   }
 
   update(id: number, updateWishlistDto: UpdateWishlistDto) {

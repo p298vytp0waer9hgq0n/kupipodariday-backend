@@ -1,7 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import { LocalBaseEntity } from 'src/utils/base.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
-import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Wishlist extends LocalBaseEntity {
@@ -14,6 +14,7 @@ export class Wishlist extends LocalBaseEntity {
   @ManyToOne(() => User, (user) => user.id)
   owner: User;
 
-  @ManyToMany(() => Wish, (wish) => wish.id)
+  @ManyToMany(() => Wish)
+  @JoinTable()
   items: Wish[];
 }

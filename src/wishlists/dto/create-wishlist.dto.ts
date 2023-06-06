@@ -11,5 +11,5 @@ export class CreateWishlistDto {
 
   @ArrayNotEmpty()
   @IsNumber({}, { each: true })
-  itemId: number[];
+  itemsId: number[];
 }
