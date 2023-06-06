@@ -1,20 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('wishlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 
   @Post()
-  create(@Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistsService.create(createWishlistDto);
+  create(@Request() req, @Body() createWishlistDto: CreateWishlistDto) {
+    return this.wishlistsService.create(req.user.id, createWishlistDto);
   }
 
   @Get()
-  findAll() {
-    return this.wishlistsService.findAll();
+  findAll(@Request() req) {
+    return this.wishlistsService.findAll(req.user.id);
   }
 
   @Get(':id')

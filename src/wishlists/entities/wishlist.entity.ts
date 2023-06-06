@@ -9,9 +9,6 @@ export class Wishlist extends LocalBaseEntity {
   name: string;
 
   @Column()
-  description: string;
-
-  @Column()
   image: string;
 
   @ManyToOne(() => User, (user) => user.id)
