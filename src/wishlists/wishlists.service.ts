@@ -1,4 +1,9 @@
-import { Injectable, UseGuards } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,6 +21,8 @@ export class WishlistsService {
     private wishlistRepository: Repository<Wishlist>,
     @InjectRepository(Wish)
     private wishesRepository: Repository<Wish>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
   async create(userId, createWishlistDto: CreateWishlistDto) {
@@ -49,11 +56,23 @@ export class WishlistsService {
     });
   }
 
-  update(id: number, updateWishlistDto: UpdateWishlistDto) {
-    return `This action updates a #${id} wishlist`;
+  async update(userId, id: number, updateWishlistDto: UpdateWishlistDto) {
+    const wishlist = await this.findOne(id);
+    if (!wishlist) throw new NotFoundException('Вишлист не найден.');
+    const user = await this.usersRepository.findOneBy({ id: userId });
+    if (user.id !== wishlist.owner.id)
+      throw new UnauthorizedException('Нельзя менять чужие вишлисты.');
+    return this.wishlistRepository.save({
+      id,
+      ...updateWishlistDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wishlist`;
+  async remove(userId, id: number) {
+    const wishlist = await this.findOne(id);
+    if (!wishlist) throw new NotFoundException('Вишлист не найден.');
+    if (wishlist.owner.id !== userId)
+      throw new UnauthorizedException('Нельзя удалять чужие вишлисты.');
+    return this.wishlistRepository.delete(id);
   }
 }

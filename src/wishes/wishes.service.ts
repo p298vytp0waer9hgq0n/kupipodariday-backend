@@ -64,7 +64,7 @@ export class WishesService {
 
   async remove(userId: number, id: number) {
     const wish = await this.findOne(id);
-    if (!wish) throw new NotFoundException();
+    if (!wish) throw new NotFoundException('Виш не найден.');
     if (wish.user.id !== userId)
       throw new UnauthorizedException('Нельзя удалять чужие виши.');
     return this.wishesRepository.delete(id);
