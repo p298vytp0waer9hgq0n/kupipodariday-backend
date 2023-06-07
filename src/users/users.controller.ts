@@ -13,7 +13,6 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FindUserDto } from './dto/find-user.dto';
-import { UserPublicProfileResponseDto } from './dto/user-public-profile-response.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
