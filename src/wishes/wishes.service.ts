@@ -40,7 +40,8 @@ export class WishesService {
 
   findPopular() {
     return this.wishesRepository.find({
-      relations: { owner: true },
+      relations: { owner: true, offers: true },
+      where: { offers: { hidden: false } },
       order: { copied: 'DESC' },
       take: 20,
     });

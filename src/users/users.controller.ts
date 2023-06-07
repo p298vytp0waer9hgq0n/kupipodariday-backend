@@ -44,9 +44,7 @@ export class UsersController {
   }
 
   @Get(':username')
-  async userProfile(
-    @Param('username') username: string,
-  ): Promise<UserPublicProfileResponseDto> {
+  async userProfile(@Param('username') username: string) {
     return await this.usersService.findOneByName(username);
   }
 
