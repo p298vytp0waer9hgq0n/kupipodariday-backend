@@ -23,7 +23,7 @@ export class OffersService {
 
   offerIsLegit(user: User, wish: Wish, offer: CreateOfferDto) {
     if (!wish) throw new NotFoundException('Виш не найден.');
-    if (wish.user.id === user.id)
+    if (wish.owner.id === user.id)
       throw new BadRequestException('Нельзя скинуться на собственный виш.');
     if (Number(wish.raised) + Number(offer.amount) > wish.price)
       throw new BadRequestException('Сумма превышает стоимость виша.');
@@ -34,7 +34,7 @@ export class OffersService {
     const user = await this.usersRepository.findOneBy({ id: userId });
     const wish = await this.wishesRepository.findOne({
       where: { id: createOfferDto.itemId },
-      relations: { user: true },
+      relations: { owner: true },
     });
     if (this.offerIsLegit(user, wish, createOfferDto)) {
       this.wishesRepository.save({

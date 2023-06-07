@@ -21,7 +21,7 @@ export class Wish extends LocalBaseEntity {
   raised: number;
 
   @ManyToOne(() => User, (user) => user.id)
-  user: User;
+  owner: User;
 
   @Column()
   description: string;

@@ -16,14 +16,15 @@ export class User extends LocalBaseEntity {
   @Column({ default: 'https://i.pravatar.cc/300' })
   avatar: string;
 
+  @Exclude()
   @Column({ unique: true })
   email: string;
 
   @Exclude()
-  @Column()
+  @Column({ select: false })
   password: string;
 
-  @OneToMany(() => Wish, (wish) => wish.user)
+  @OneToMany(() => Wish, (wish) => wish.owner)
   wish: Wish[];
 
   @OneToMany(() => Offer, (offer) => offer.user)

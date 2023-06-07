@@ -31,7 +31,7 @@ export class WishesService {
 
   findLatest() {
     return this.wishesRepository.find({
-      relations: { user: true, offers: true },
+      relations: { owner: true, offers: true },
       order: { createdAt: 'DESC' },
       take: 40,
     });
@@ -39,7 +39,7 @@ export class WishesService {
 
   findPopular() {
     return this.wishesRepository.find({
-      relations: { user: true },
+      relations: { owner: true },
       order: { copied: 'DESC' },
       take: 20,
     });
@@ -47,7 +47,7 @@ export class WishesService {
 
   async findOne(id: number) {
     const result = await this.wishesRepository.findOne({
-      relations: { user: true },
+      relations: { owner: true },
       where: { id },
     });
     if (!result) throw new NotFoundException('Виш не найден.');
@@ -56,7 +56,7 @@ export class WishesService {
 
   async update(userId: number, id: number, updateWishDto: UpdateWishDto) {
     const wish = await this.findOne(id);
-    if (wish.user.id !== userId)
+    if (wish.owner.id !== userId)
       throw new UnauthorizedException('Нельзя изменять чужие виши.');
     if (wish.raised > 0) throw new ForbiddenException('На виш уже сбросились.');
     return this.wishesRepository.save({ ...updateWishDto, id });
@@ -64,7 +64,7 @@ export class WishesService {
 
   async remove(userId: number, id: number) {
     const wish = await this.findOne(id);
-    if (wish.user.id !== userId)
+    if (wish.owner.id !== userId)
       throw new UnauthorizedException('Нельзя удалять чужие виши.');
     if (wish.raised > 0) throw new ForbiddenException('На виш уже сбросились.');
     return this.wishesRepository.delete(id);
@@ -72,7 +72,7 @@ export class WishesService {
 
   async copy(userId, id: number) {
     const wish = await this.findOne(id);
-    const newWish = { ...wish, user: userId, copied: 0, raised: 0 };
+    const newWish = { ...wish, owner: userId, copied: 0, raised: 0 };
     delete newWish.id;
     wish.copied++;
     this.wishesRepository.save(wish);

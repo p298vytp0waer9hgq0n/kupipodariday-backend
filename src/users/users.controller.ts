@@ -20,6 +20,9 @@ import { UserPublicProfileResponseDto } from './dto/user-public-profile-response
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @SerializeOptions({
+    ignoreDecorators: true,
+  })
   @Get('me')
   ownProfile(@Request() req) {
     return this.usersService.findOneById(req.user.id);
@@ -35,17 +38,11 @@ export class UsersController {
     return this.usersService.findUserWishes(req.user.id);
   }
 
-  @SerializeOptions({
-    excludePrefixes: ['email'],
-  })
   @Post('find')
   find(@Body() findUserDto: FindUserDto) {
     return this.usersService.findMany(findUserDto);
   }
 
-  @SerializeOptions({
-    excludePrefixes: ['email'],
-  })
   @Get(':username')
   async userProfile(
     @Param('username') username: string,
@@ -53,9 +50,6 @@ export class UsersController {
     return await this.usersService.findOneByName(username);
   }
 
-  @SerializeOptions({
-    excludePrefixes: ['email'],
-  })
   @Get(':username/wishes')
   userWishes(@Request() req, @Param('username') username: string) {
     return this.usersService.findUserWishes(username);

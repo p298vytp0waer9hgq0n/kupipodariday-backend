@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -67,8 +71,8 @@ export class UsersService {
       user.id = userId.id;
     } else user.id = userData;
     return this.wishesRepository.find({
-      relations: ['user', 'offers', 'offers.user'],
-      where: { user },
+      relations: ['owner', 'offers', 'offers.user'],
+      where: { owner: user },
     });
   }
 }
