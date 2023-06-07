@@ -20,9 +20,10 @@ export class WishesController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Request() req, @Body() createWishDto: CreateWishDto) {
+  async create(@Request() req, @Body() createWishDto: CreateWishDto) {
     const id = req.user.id;
-    return this.wishesService.create(id, createWishDto);
+    await this.wishesService.create(id, createWishDto);
+    return;
   }
 
   @Get('last')
@@ -43,12 +44,13 @@ export class WishesController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(
+  async update(
     @Request() req,
     @Param('id') id: string,
     @Body() updateWishDto: UpdateWishDto,
   ) {
-    return this.wishesService.update(req.user.id, +id, updateWishDto);
+    await this.wishesService.update(req.user.id, +id, updateWishDto);
+    return;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -59,7 +61,8 @@ export class WishesController {
 
   @UseGuards(JwtAuthGuard)
   @Post(':id/copy')
-  copy(@Request() req, @Param('id') id: string) {
-    return this.wishesService.copy(req.user.id, +id);
+  async copy(@Request() req, @Param('id') id: string) {
+    await this.wishesService.copy(req.user.id, +id);
+    return;
   }
 }

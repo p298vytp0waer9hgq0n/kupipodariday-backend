@@ -47,7 +47,7 @@ export class WishesService {
 
   async findOne(id: number) {
     const result = await this.wishesRepository.findOne({
-      relations: { owner: true },
+      relations: ['owner', 'offers', 'offers.user'],
       where: { id },
     });
     if (!result) throw new NotFoundException('Виш не найден.');
@@ -58,7 +58,8 @@ export class WishesService {
     const wish = await this.findOne(id);
     if (wish.owner.id !== userId)
       throw new UnauthorizedException('Нельзя изменять чужие виши.');
-    if (wish.raised > 0) throw new ForbiddenException('На виш уже сбросились.');
+    if (wish.raised > 0 && updateWishDto.price)
+      throw new ForbiddenException('На виш уже сбросились.');
     return this.wishesRepository.save({ ...updateWishDto, id });
   }
 
@@ -67,7 +68,8 @@ export class WishesService {
     if (wish.owner.id !== userId)
       throw new UnauthorizedException('Нельзя удалять чужие виши.');
     if (wish.raised > 0) throw new ForbiddenException('На виш уже сбросились.');
-    return this.wishesRepository.delete(id);
+    await this.wishesRepository.delete(id);
+    return wish;
   }
 
   async copy(userId, id: number) {

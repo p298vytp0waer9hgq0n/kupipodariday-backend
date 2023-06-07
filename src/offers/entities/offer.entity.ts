@@ -9,7 +9,7 @@ export class Offer extends LocalBaseEntity {
   user: User;
 
   @ManyToOne(() => Wish, (wish) => wish.id)
-  wish: Wish;
+  item: Wish;
 
   @Column()
   amount: number;

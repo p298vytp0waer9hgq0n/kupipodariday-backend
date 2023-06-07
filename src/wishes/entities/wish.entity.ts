@@ -26,7 +26,7 @@ export class Wish extends LocalBaseEntity {
   @Column()
   description: string;
 
-  @OneToMany(() => Offer, (offer) => offer.wish)
+  @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];
 
   @Column()

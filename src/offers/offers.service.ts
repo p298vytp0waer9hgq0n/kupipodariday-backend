@@ -51,7 +51,7 @@ export class OffersService {
 
   findAllByUser(id: number) {
     return this.offersRepository.find({
-      relations: { user: true },
+      relations: ['user', 'item', 'item.owner'],
       where: {
         user: {
           id: id,
@@ -61,6 +61,9 @@ export class OffersService {
   }
 
   findOne(id: number) {
-    return this.offersRepository.findOneBy({ id });
+    return this.offersRepository.findOne({
+      relations: ['user', 'item', 'item.owner'],
+      where: { id },
+    });
   }
 }

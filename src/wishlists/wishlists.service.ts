@@ -31,16 +31,20 @@ export class WishlistsService {
       wish.id = ele;
       return wish;
     });
-    return this.wishlistRepository.save({
+    const { id } = await this.wishlistRepository.save({
       ...createWishlistDto,
       owner: userId,
       items: items,
+    });
+    return this.wishlistRepository.findOne({
+      relations: ['owner', 'items'],
+      where: { id },
     });
   }
 
   findAll(id: number) {
     return this.wishlistRepository.find({
-      relations: { owner: true },
+      relations: { owner: true, items: true },
       where: {
         owner: {
           id: id,
@@ -62,10 +66,11 @@ export class WishlistsService {
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (user.id !== wishlist.owner.id)
       throw new UnauthorizedException('Нельзя менять чужие вишлисты.');
-    return this.wishlistRepository.save({
+    await this.wishlistRepository.save({
       id,
       ...updateWishlistDto,
     });
+    return this.findOne(id);
   }
 
   async remove(userId, id: number) {
@@ -73,6 +78,7 @@ export class WishlistsService {
     if (!wishlist) throw new NotFoundException('Вишлист не найден.');
     if (wishlist.owner.id !== userId)
       throw new UnauthorizedException('Нельзя удалять чужие вишлисты.');
-    return this.wishlistRepository.delete(id);
+    await this.wishlistRepository.delete(id);
+    return wishlist;
   }
 }
