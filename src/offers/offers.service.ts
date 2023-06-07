@@ -25,8 +25,10 @@ export class OffersService {
     if (!wish) throw new NotFoundException('Виш не найден.');
     if (wish.owner.id === user.id)
       throw new BadRequestException('Нельзя скинуться на собственный виш.');
-    if (Number(wish.raised) + Number(offer.amount) > wish.price)
+    if (Number(wish.raised) + Number(offer.amount) > wish.price) {
+      console.log(wish.raised, offer.amount);
       throw new BadRequestException('Сумма превышает стоимость виша.');
+    }
     return true;
   }
 
@@ -41,10 +43,11 @@ export class OffersService {
         ...wish,
         raised: Number(wish.raised) + Number(createOfferDto.amount),
       });
+      console.log(wish.id);
       return this.offersRepository.save({
         ...createOfferDto,
         user,
-        wish,
+        item: wish,
       });
     }
   }

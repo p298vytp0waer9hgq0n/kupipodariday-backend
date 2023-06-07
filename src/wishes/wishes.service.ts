@@ -32,6 +32,7 @@ export class WishesService {
   findLatest() {
     return this.wishesRepository.find({
       relations: { owner: true, offers: true },
+      where: { offers: { hidden: false } },
       order: { createdAt: 'DESC' },
       take: 40,
     });
@@ -48,7 +49,7 @@ export class WishesService {
   async findOne(id: number) {
     const result = await this.wishesRepository.findOne({
       relations: ['owner', 'offers', 'offers.user'],
-      where: { id },
+      where: { id, offers: { hidden: false } },
     });
     if (!result) throw new NotFoundException('Виш не найден.');
     return result;

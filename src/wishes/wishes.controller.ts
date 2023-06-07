@@ -23,7 +23,7 @@ export class WishesController {
   async create(@Request() req, @Body() createWishDto: CreateWishDto) {
     const id = req.user.id;
     await this.wishesService.create(id, createWishDto);
-    return;
+    return {};
   }
 
   @Get('last')
@@ -50,7 +50,7 @@ export class WishesController {
     @Body() updateWishDto: UpdateWishDto,
   ) {
     await this.wishesService.update(req.user.id, +id, updateWishDto);
-    return;
+    return {};
   }
 
   @UseGuards(JwtAuthGuard)
@@ -63,6 +63,6 @@ export class WishesController {
   @Post(':id/copy')
   async copy(@Request() req, @Param('id') id: string) {
     await this.wishesService.copy(req.user.id, +id);
-    return;
+    return {};
   }
 }

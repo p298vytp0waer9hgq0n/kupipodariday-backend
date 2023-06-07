@@ -71,8 +71,11 @@ export class UsersService {
       user.id = userId.id;
     } else user.id = userData;
     return this.wishesRepository.find({
-      relations: ['owner', 'offers', 'offers.user'],
-      where: { owner: user },
+      relations: {
+        owner: true,
+        offers: true,
+      },
+      where: { owner: user, offers: { hidden: false } },
     });
   }
 }
