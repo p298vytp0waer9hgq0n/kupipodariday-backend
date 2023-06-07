@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -20,11 +20,10 @@ export class WishesService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(id: number, createWishDto: CreateWishDto) {
-    const user = await this.usersRepository.findOneBy({ id });
+  async create(id, createWishDto: CreateWishDto) {
     return this.wishesRepository.save({
       ...createWishDto,
-      user,
+      user: id,
       copied: 0,
       raised: 0,
     });
@@ -59,8 +58,7 @@ export class WishesService {
     const wish = await this.findOne(id);
     if (wish.user.id !== userId)
       throw new UnauthorizedException('Нельзя изменять чужие виши.');
-    if (wish.raised > 0)
-      throw new BadRequestException('На виш уже сбросились.');
+    if (wish.raised > 0) throw new ForbiddenException('На виш уже сбросились.');
     return this.wishesRepository.save({ ...updateWishDto, id });
   }
 
@@ -68,13 +66,13 @@ export class WishesService {
     const wish = await this.findOne(id);
     if (wish.user.id !== userId)
       throw new UnauthorizedException('Нельзя удалять чужие виши.');
+    if (wish.raised > 0) throw new ForbiddenException('На виш уже сбросились.');
     return this.wishesRepository.delete(id);
   }
 
   async copy(userId, id: number) {
     const wish = await this.findOne(id);
-    const newWish = { ...wish, user: userId };
-    newWish.copied = 0;
+    const newWish = { ...wish, user: userId, copied: 0, raised: 0 };
     delete newWish.id;
     wish.copied++;
     this.wishesRepository.save(wish);

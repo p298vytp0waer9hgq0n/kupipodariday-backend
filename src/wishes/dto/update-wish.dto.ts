@@ -1,4 +1,11 @@
-import { IsOptional, Length, IsUrl, Min, IsNotIn, Equals } from 'class-validator';
+import {
+  IsOptional,
+  Length,
+  IsUrl,
+  Min,
+  IsNotIn,
+  Equals,
+} from 'class-validator';
 
 export class UpdateWishDto {
   @Equals(undefined)

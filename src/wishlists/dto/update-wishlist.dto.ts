@@ -1,6 +1,13 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateWishlistDto } from './create-wishlist.dto';
-import { ArrayNotEmpty, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 export class UpdateWishlistDto {
   @IsOptional()

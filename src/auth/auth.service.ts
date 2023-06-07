@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { SigninUserDto } from './dto/signin-user.dto';
 import { UsersService } from 'src/users/users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,12 +21,10 @@ export class AuthService {
   async signup(createUserDto: CreateUserDto) {
     const passwd = createUserDto.password;
     const hash = passwd ? bcrypt.hashSync(passwd, 10) : '';
-    const res = await this.usersService.create({
+    return await this.usersService.create({
       ...createUserDto,
       password: hash,
     });
-    if (res) return this.usersService.findOneByName(createUserDto.username);
-    return null;
   }
 
   async validatePasswd({ password, username }: SigninUserDto) {

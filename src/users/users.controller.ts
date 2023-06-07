@@ -7,13 +7,13 @@ import {
   Request,
   Get,
   Param,
+  SerializeOptions,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FindUserDto } from './dto/find-user.dto';
 import { UserPublicProfileResponseDto } from './dto/user-public-profile-response.dto';
-import { plainToInstance } from 'class-transformer';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -30,24 +30,34 @@ export class UsersController {
     return this.usersService.update(req.user.id, updateUserDto);
   }
 
+  @Get('me/wishes')
+  myWishes(@Request() req) {
+    return this.usersService.findUserWishes(req.user.id);
+  }
+
+  @SerializeOptions({
+    excludePrefixes: ['email'],
+  })
   @Post('find')
   find(@Body() findUserDto: FindUserDto) {
     return this.usersService.findMany(findUserDto);
   }
 
-  /* @SerializeOptions({
+  @SerializeOptions({
     excludePrefixes: ['email'],
-  }) */
+  })
   @Get(':username')
-  async userProfile(@Param('username') username: string): Promise<UserPublicProfileResponseDto> {
-    const user = await this.usersService.findOneByName(username);
-    // const response = UserPublicProfileResponseDto.fromEntity(user);
-    const response = plainToInstance(UserPublicProfileResponseDto, user);
-    return response;
+  async userProfile(
+    @Param('username') username: string,
+  ): Promise<UserPublicProfileResponseDto> {
+    return await this.usersService.findOneByName(username);
   }
 
-  @Get('me/wishes')
-  myWishes(@Request() req) {
-    return this.usersService.findUserWishes(req.user.id);
+  @SerializeOptions({
+    excludePrefixes: ['email'],
+  })
+  @Get(':username/wishes')
+  userWishes(@Request() req, @Param('username') username: string) {
+    return this.usersService.findUserWishes(username);
   }
 }
