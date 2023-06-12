@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -8,16 +9,14 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
-import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { DataSource, IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class WishesService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(Wish)
     private wishesRepository: Repository<Wish>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
   ) {}
 
   async create(id, createWishDto: CreateWishDto) {
@@ -32,7 +31,7 @@ export class WishesService {
   findLatest() {
     return this.wishesRepository.find({
       relations: { owner: true, offers: true },
-      where: { offers: { hidden: false } },
+      where: { offers: [{ hidden: false }, { id: IsNull() }] },
       order: { createdAt: 'DESC' },
       take: 40,
     });
@@ -41,7 +40,7 @@ export class WishesService {
   findPopular() {
     return this.wishesRepository.find({
       relations: { owner: true, offers: true },
-      where: { offers: { hidden: false } },
+      where: { offers: [{ hidden: false }, { id: IsNull() }] },
       order: { copied: 'DESC' },
       take: 20,
     });
@@ -50,7 +49,7 @@ export class WishesService {
   async findOne(id: number) {
     const result = await this.wishesRepository.findOne({
       relations: ['owner', 'offers', 'offers.user'],
-      where: { id, offers: { hidden: false } },
+      where: { id, offers: [{ hidden: false }, { id: IsNull() }] },
     });
     if (!result) throw new NotFoundException('Виш не найден.');
     return result;
@@ -62,7 +61,8 @@ export class WishesService {
       throw new UnauthorizedException('Нельзя изменять чужие виши.');
     if (wish.raised > 0 && updateWishDto.price)
       throw new ForbiddenException('На виш уже сбросились.');
-    return this.wishesRepository.save({ ...updateWishDto, id });
+    await this.wishesRepository.save({ ...updateWishDto, id });
+    return {};
   }
 
   async remove(userId: number, id: number) {
@@ -75,11 +75,24 @@ export class WishesService {
   }
 
   async copy(userId, id: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
     const wish = await this.findOne(id);
     const newWish = { ...wish, owner: userId, copied: 0, raised: 0 };
     delete newWish.id;
+    delete newWish.name;
     wish.copied++;
-    this.wishesRepository.save(wish);
-    return this.wishesRepository.save(newWish);
+    await queryRunner.startTransaction();
+    try {
+      await queryRunner.manager.save(Wish, wish);
+      await queryRunner.manager.save(Wish, newWish);
+      await queryRunner.commitTransaction();
+      return {};
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('Произошла ошибка сервера.');
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

@@ -49,8 +49,7 @@ export class WishesController {
     @Param('id') id: string,
     @Body() updateWishDto: UpdateWishDto,
   ) {
-    await this.wishesService.update(req.user.id, +id, updateWishDto);
-    return {};
+    return this.wishesService.update(req.user.id, +id, updateWishDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -62,7 +61,6 @@ export class WishesController {
   @UseGuards(JwtAuthGuard)
   @Post(':id/copy')
   async copy(@Request() req, @Param('id') id: string) {
-    await this.wishesService.copy(req.user.id, +id);
-    return {};
+    return this.wishesService.copy(req.user.id, +id);
   }
 }

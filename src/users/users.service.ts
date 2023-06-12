@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { FindUserDto } from './dto/find-user.dto';
 import { Wish } from '../wishes/entities/wish.entity';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
@@ -86,7 +86,7 @@ export class UsersService {
         owner: true,
         offers: true,
       },
-      where: { owner: user, offers: { hidden: false } },
+      where: { owner: user, offers: [{ hidden: false }, { id: IsNull() }] },
     });
   }
 }
