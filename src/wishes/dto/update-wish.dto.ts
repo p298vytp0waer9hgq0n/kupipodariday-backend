@@ -1,11 +1,4 @@
-import {
-  IsOptional,
-  Length,
-  IsUrl,
-  Min,
-  IsNotIn,
-  Equals,
-} from 'class-validator';
+import { IsOptional, Length, Min, Equals } from 'class-validator';
 
 export class UpdateWishDto {
   @Equals(undefined)
@@ -16,6 +9,12 @@ export class UpdateWishDto {
 
   @Equals(undefined)
   link;
+
+  @Equals(undefined)
+  raised;
+
+  @Equals(undefined)
+  copied;
 
   @IsOptional()
   @Min(1)

@@ -13,11 +13,15 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FindUserDto } from './dto/find-user.dto';
+import { DataSource } from 'typeorm';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly dataSource: DataSource,
+  ) {}
 
   @SerializeOptions({
     ignoreDecorators: true,
@@ -27,6 +31,9 @@ export class UsersController {
     return this.usersService.findOneById(req.user.id);
   }
 
+  @SerializeOptions({
+    ignoreDecorators: true,
+  })
   @Patch('me')
   update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(req.user.id, updateUserDto);

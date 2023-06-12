@@ -19,8 +19,6 @@ export class WishlistsService {
   constructor(
     @InjectRepository(Wishlist)
     private wishlistRepository: Repository<Wishlist>,
-    @InjectRepository(Wish)
-    private wishesRepository: Repository<Wish>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
