@@ -21,17 +21,23 @@ export class UsersService {
     private wishesRepository: Repository<Wish>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const nameConflict = await this.findOneByName(createUserDto.username);
-    const emailConflict = await this.usersRepository.findOneBy({
-      email: createUserDto.email,
-    });
+  async checkUserConflict(name: string, email: string, id: number = null) {
+    const nameFound = name && (await this.findOneByName(name));
+    const emailFound =
+      email && (await this.usersRepository.findOneBy({ email }));
+    const nameConflict = nameFound && nameFound.id !== id;
+    const emailConflict = emailFound && emailFound.id !== id;
     if (nameConflict || emailConflict)
       throw new ConflictException(
         `Пользователь с таким ${
           nameConflict ? 'именем' : 'мылом'
         } уже зарегистрирован.`,
       );
+    return false;
+  }
+
+  async create(createUserDto: CreateUserDto) {
+    await this.checkUserConflict(createUserDto.username, createUserDto.email);
     return this.usersRepository.save(createUserDto);
   }
 
@@ -52,6 +58,11 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    await this.checkUserConflict(
+      updateUserDto.username,
+      updateUserDto.email,
+      id,
+    );
     if ('password' in updateUserDto) {
       updateUserDto.password = bcrypt.hashSync(updateUserDto.password, 10);
     }

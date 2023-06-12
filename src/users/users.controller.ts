@@ -27,6 +27,9 @@ export class UsersController {
     return this.usersService.findOneById(req.user.id);
   }
 
+  @SerializeOptions({
+    ignoreDecorators: true,
+  })
   @Patch('me')
   update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(req.user.id, updateUserDto);
