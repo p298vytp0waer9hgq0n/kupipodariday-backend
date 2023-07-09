@@ -80,7 +80,6 @@ export class WishesService {
     const wish = await this.findOne(id);
     const newWish = { ...wish, owner: userId, copied: 0, raised: 0 };
     delete newWish.id;
-    delete newWish.name;
     wish.copied++;
     await queryRunner.startTransaction();
     try {
