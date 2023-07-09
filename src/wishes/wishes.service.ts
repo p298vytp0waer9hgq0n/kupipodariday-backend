@@ -22,7 +22,7 @@ export class WishesService {
   async create(id, createWishDto: CreateWishDto) {
     return this.wishesRepository.save({
       ...createWishDto,
-      user: id,
+      owner: id,
       copied: 0,
       raised: 0,
     });
